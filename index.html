@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arhitectul Interior - Panoul Tău de Control</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+        :root {
+            --dark-blue: #12102f;
+            --light-slate: #2c2a4a;
+            --text-color: #e0e0e0;
+            --accent-gold: #FFD700;
+            --accent-green: #28a745;
+            --subtle-gray: #a0a0a0;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--dark-blue);
+            color: var(--text-color);
+            line-height: 1.7;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            margin: 20px auto;
+            background-color: var(--light-slate);
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            overflow: hidden;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, #1f1d47, #12102f);
+            border-bottom: 2px solid var(--accent-gold);
+        }
+
+        header h1 {
+            font-size: 2.8em;
+            color: var(--accent-gold);
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        header h2 {
+            font-size: 1.2em;
+            font-weight: 300;
+            color: var(--subtle-gray);
+        }
+        
+        main { padding: 30px; }
+
+        .intro-pact {
+            background-color: rgba(255, 215, 0, 0.05);
+            border-left: 4px solid var(--accent-gold);
+            padding: 20px;
+            margin-bottom: 40px;
+            border-radius: 5px;
+            font-style: italic;
+        }
+
+        .step {
+            margin-bottom: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .step-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            cursor: pointer;
+            background-color: rgba(255,255,255,0.03);
+            border-radius: 10px;
+        }
+        
+        .step.active > .step-header { border-radius: 10px 10px 0 0; }
+        .step-header:hover { background-color: rgba(255,255,255,0.07); }
+
+        .step-title { display: flex; align-items: center; }
+
+        .step-number {
+            font-size: 1em; font-weight: 600; background-color: var(--accent-gold);
+            color: var(--dark-blue); border-radius: 50%; width: 35px; height: 35px;
+            display: flex; align-items: center; justify-content: center; margin-right: 15px;
+            flex-shrink: 0;
+        }
+
+        .step-title h3 { font-size: 1.4em; font-weight: 600; }
+
+        .toggle-icon {
+            font-size: 2em; font-weight: 300; color: var(--accent-gold);
+            transition: transform 0.3s ease;
+        }
+
+        .step.active .toggle-icon { transform: rotate(45deg); }
+
+        .step-content {
+            max-height: 0; overflow: hidden;
+            transition: max-height 0.5s ease-out, padding 0.5s ease-out;
+            padding: 0 25px;
+        }
+        
+        .step.active .step-content { padding: 25px; }
+        .step-content p, .step-content ul { margin-bottom: 15px; }
+        .step-content ul { list-style-position: inside; padding-left: 5px; }
+
+        .exercise {
+            margin-top: 25px; padding: 20px; background-color: var(--dark-blue);
+            border-radius: 8px; border: 1px solid rgba(255,215,0,0.2);
+        }
+
+        .exercise-title {
+            font-weight: 600; color: var(--accent-gold); margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+        
+        .belief-input-group { margin-bottom: 20px; }
+        .belief-input-group label {
+            display: block; margin-bottom: 5px;
+            font-weight: 300; color: var(--subtle-gray);
+        }
+
+        input[type="text"], textarea {
+            width: 100%; padding: 12px; background-color: var(--light-slate);
+            border: 1px solid rgba(255,255,255,0.2); border-radius: 5px;
+            color: var(--text-color); font-family: 'Poppins', sans-serif;
+            font-size: 1em; margin-bottom: 10px;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        input:focus, textarea:focus {
+            outline: none; border-color: var(--accent-gold);
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+        }
+
+        textarea { resize: vertical; min-height: 100px; }
+
+        #s3_new_belief { border: 1.5px solid var(--accent-gold); }
+
+        .controls {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 30px; border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        #save-status { color: var(--accent-green); transition: opacity 0.5s ease; }
+        
+        button#reset-button {
+            background-color: #c82333; color: white; border: none; padding: 10px 20px;
+            border-radius: 5px; cursor: pointer; font-weight: 600;
+        }
+        
+        @media (max-width: 768px) {
+            body { padding: 5px; }
+            header h1 { font-size: 2em; }
+            header h2 { font-size: 1em; }
+            main { padding: 15px; }
+            .step-header, .step.active .step-content { padding: 15px; }
+            .step-title h3 { font-size: 1.2em; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Arhitectul Interior</h1>
+            <h2>Panoul Tău de Control pentru Rescrierea Minții</h2>
+        </header>
+
+        <main>
+            <div class="intro-pact">
+                <p><strong>Pactul cu Tine:</strong> "De astăzi, mă angajez să fiu arhitectul conștient al minții mele. Renunț la rolul de victimă și accept responsabilitatea totală pentru convingerile mele. Încep acum."</p>
+            </div>
+            
+            <div class="step">
+                <div class="step-header">
+                    <div class="step-title"><span class="step-number">1</span><h3>CONȘTIENTIZEAZĂ (Inspecția)</h3></div>
+                    <span class="toggle-icon">+</span>
+                </div>
+                <div class="step-content">
+                    <p>Primul pas este să scoți la lumină convingerile limitative care îți sabotează progresul. Fii un detectiv curios și onest al propriei minți.</p>
+                    <div class="exercise">
+                        <p class="exercise-title">Exercițiu: Arheologul Minții</p>
+                        <p>Notează zonele unde te simți blocat și poveștile pe care ți le spui. Care este convingerea reală din spate?</p>
+                        <textarea id="s1_findings" class="data-input" placeholder="Ex: Carieră - Nu aplic la joburi mai bune pentru că sigur găsesc pe cineva mai calificat. CONVINGERE: 'Nu sunt suficient de bun.'
+Ex: Bani - Nu pot economisi niciodată, mereu apare ceva. CONVINGERE: 'Nu mă pricep la bani.'"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-header">
+                    <div class="step-title"><span class="step-number">2</span><h3>DECONSTRUIEȘTE (Demolarea)</h3></div>
+                    <span class="toggle-icon">+</span>
+                </div>
+                <div class="step-content">
+                    <p>Alege o convingere de la Pasul 1 și pune-o sub un microscop. Chestioneaz-o până își pierde toată puterea.</p>
+                    <div class="exercise">
+                        <p class="exercise-title">Exercițiu: Interogatoriul</p>
+                        <div class="belief-input-group">
+                             <label for="s2_belief">Convingerea limitativă pe care o analizezi:</label>
+                             <input type="text" id="s2_belief" class="data-input" placeholder="Scrie aici convingerea: ex. Nu sunt suficient de bun">
+                        </div>
+                        <div class="belief-input-group">
+                             <label for="s2_q1">1. Este 100% adevărată, fără nicio urmă de îndoială?</label>
+                             <input type="text" id="s2_q1" class="data-input" placeholder="Răspuns scurt: Nu, nu pot fi absolut sigur.">
+                        </div>
+                         <div class="belief-input-group">
+                             <label for="s2_q2">2. Cum reacționezi când crezi acest gând? Ce se întâmplă în viața ta?</label>
+                             <input type="text" id="s2_q2" class="data-input" placeholder="Ex: Devin anxios, nu mai acționez, amân, mă simt mic...">
+                        </div>
+                         <div class="belief-input-group">
+                             <label for="s2_q3">3. Cine ai fi tu și ce ai face FĂRĂ acest gând?</label>
+                             <input type="text" id="s2_q3" class="data-input" placeholder="Ex: Aș fi liber, curajos, aș aplica la job, aș vorbi mai mult...">
+                        </div>
+                         <div class="belief-input-group">
+                             <label for="s2_q4">4. Care este opusul? Găsește 3 dovezi concrete că opusul este adevărat.</label>
+                             <textarea id="s2_q4" class="data-input" placeholder="Opusul: SUNT SUFICIENT DE BUN. Dovezi: 1. Am reușit la proiectul X. 2. Am ajutat un prieten. 3. Am învățat să fac..."></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-header">
+                    <div class="step-title"><span class="step-number">3</span><h3>ÎNLOCUIEȘTE (Reconstrucția)</h3></div>
+                    <span class="toggle-icon">+</span>
+                </div>
+                <div class="step-content">
+                    <p>Pe terenul proaspăt curățat, instalează o nouă convingere de putere. Acesta este noul tău decret personal, noua ta lege.</p>
+                    <ul>
+                        <li>Fă-o personală: "Eu sunt...", "Eu pot...".</li>
+                        <li>Fă-o la timpul prezent: "Eu sunt încrezător", nu "Voi fi...".</li>
+                        <li>Fă-o pozitivă și plină de emoție.</li>
+                    </ul>
+                     <div class="exercise">
+                        <p class="exercise-title">Exercițiu: Noul Decret</p>
+                        <div class="belief-input-group">
+                            <label for="s3_old_belief">CONVINGEREA VECHE (cea demolată la Pasul 2):</label>
+                            <input type="text" id="s3_old_belief" class="data-input" placeholder="Ex: Nu sunt suficient de bun.">
+                        </div>
+                        <div class="belief-input-group">
+                            <label for="s3_new_belief">NOUA CONVINGERE DE PUTERE:</label>
+                            <input type="text" id="s3_new_belief" class="data-input" placeholder="Ex: Valoarea mea este intrinsecă și îmi aduc contribuția unică.">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-header">
+                    <div class="step-title"><span class="step-number">4</span><h3>ÎNCORPOREAZĂ (Mutarea)</h3></div>
+                    <span class="toggle-icon">+</span>
+                </div>
+                <div class="step-content">
+                    <p>Transformă noua convingere într-o realitate trăită. Fiecare acțiune pe care o faci este un vot pentru noua ta identitate.</p>
+                     <div class="exercise">
+                        <p class="exercise-title" id="s4_header">Plan de Acțiune</p>
+                        <p>Stabilește 3 acțiuni concrete pe care le vei face în următoarele 7 zile pentru a demonstra și cimenta noua ta convingere.</p>
+                        <textarea id="s4_action_plan" class="data-input" placeholder="Ex: Convingere nouă: 'Vocea mea contează'. Acțiuni:
+1. La ședința de mâine, voi exprima o opinie.
+2. Voi propune eu un loc de întâlnire cu prietenii în weekend.
+3. Voi scrie un email direct și la obiect, fără să mă scuz."></textarea>
+                    </div>
+                </div>
+            </div>
+            
+        </main>
+        
+        <div class="controls">
+            <span id="save-status"></span>
+            <button id="reset-button" title="Șterge toate datele și reîncepe">Resetează Șantierul</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const steps = document.querySelectorAll('.step-header');
+            const dataInputs = document.querySelectorAll('.data-input');
+            const saveStatus = document.getElementById('save-status');
+            const resetButton = document.getElementById('reset-button');
+            const newBeliefInput = document.getElementById('s3_new_belief');
+            const step4Header = document.getElementById('s4_header');
+            let saveTimeout;
+
+            // --- Accordion Logic ---
+            steps.forEach(header => {
+                header.addEventListener('click', function () {
+                    const parentStep = this.parentElement;
+                    const content = this.nextElementSibling;
+                    
+                    const wasActive = parentStep.classList.contains('active');
+                    
+                    // Close all steps first
+                    document.querySelectorAll('.step').forEach(s => {
+                        s.classList.remove('active');
+                        s.querySelector('.step-content').style.maxHeight = null;
+                    });
+
+                    // Open the clicked one if it wasn't already open
+                    if (!wasActive) {
+                        parentStep.classList.add('active');
+                        content.style.maxHeight = content.scrollHeight + "px";
+                    }
+                });
+            });
+            
+            // --- Data Persistence Logic ---
+            function saveData() {
+                const appData = {};
+                dataInputs.forEach(input => {
+                    appData[input.id] = input.value;
+                });
+                localStorage.setItem('arhitectInteriorData', JSON.stringify(appData));
+                
+                // Visual feedback for saving
+                saveStatus.textContent = 'Progres salvat automat.';
+                saveStatus.style.opacity = 1;
+                clearTimeout(saveTimeout);
+                saveTimeout = setTimeout(() => {
+                    saveStatus.style.opacity = 0;
+                }, 2000);
+            }
+
+            function loadData() {
+                const savedData = localStorage.getItem('arhitectInteriorData');
+                if (savedData) {
+                    const appData = JSON.parse(savedData);
+                    dataInputs.forEach(input => {
+                        if (appData[input.id]) {
+                            input.value = appData[input.id];
+                        }
+                    });
+                    updateStep4Header();
+                }
+            }
+
+            function resetData() {
+                if (confirm('Ești sigur/ă că vrei să ștergi tot progresul? Această acțiune este ireversibilă.')) {
+                    localStorage.removeItem('arhitectInteriorData');
+                    location.reload();
+                }
+            }
+
+            // --- Dynamic UI Updates ---
+            function updateStep4Header() {
+                const newBelief = newBeliefInput.value.trim();
+                if (newBelief) {
+                    step4Header.textContent = `Plan de Acțiune pentru: "${newBelief}"`;
+                } else {
+                    step4Header.textContent = 'Plan de Acțiune';
+                }
+            }
+            
+            // --- Event Listeners ---
+            dataInputs.forEach(input => {
+                input.addEventListener('input', saveData);
+            });
+            
+            newBeliefInput.addEventListener('input', updateStep4Header);
+
+            resetButton.addEventListener('click', resetData);
+
+            // Initial load
+            loadData();
+        });
+    </script>
+
+</body>
+</html>
